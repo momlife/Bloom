@@ -1,0 +1,19 @@
+{
+  "name": "momcoin",
+  "version": "1.0.0",
+  "description": "Momlife Ethereum Token & ICO contracts",
+  "main": " ",
+  "scripts": {
+    "start": "./node_modules/.bin/testrpc -p 8543 -u 0 2>/dev/null > /dev/null  & echo $! > ./testrpc.pid",
+    "stop": "cat ./testrpc.pid | xargs kill && rm ./testrpc.pid",
+    "test": "./node_modules/.bin/truffle test --network development",
+    "publish": "./node_modules/.bin/truffle deploy --network test"
+  },
+  "author": "Momlife",
+  "license": "ISC",
+  "dependencies": {
+    "ethereumjs-testrpc": "^4.1.1",
+    "truffle": "^3.4.9",
+    "zeppelin-solidity": "^1.2.0"
+  }
+}
