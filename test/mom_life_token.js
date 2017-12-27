@@ -5,6 +5,13 @@ const MomLifeToken = artifacts.require("./MomLifeToken.sol");
 const MomLifeInputWallet = artifacts.require("./MomLifeInputWallet.sol");
 const MomLifeTestFakeContract = artifacts.require("./dev/MomLifeTestFakeContract.sol");
 
+contract('MomLifeInputWallet', function(accounts){
+    MomLifeInputWallet.deployed().then(function(instance){
+        console.log(instance.address);
+    });
+
+});
+
 
 contract('MomLifeToken', function (accounts) {
 
@@ -24,7 +31,7 @@ contract('MomLifeToken', function (accounts) {
 
     it("Should assert true", async function () {
         token = await MomLifeToken.deployed();
-        assert.isTrue(true);
+        assert.isTrue(typeof token.address == "string" && token.address.length == 42);
     });
 
     it("Create 10 000 000 000 tokens at the owner account", async function () {
@@ -43,7 +50,8 @@ contract('MomLifeToken', function (accounts) {
         let oneBefore = await getBalance(addr.ownerAddress);
         let twoBefore = await getBalance(addr.fromAddress);
 
-        await token.transfer(addr.fromAddress, amount * weiDivider, {from: addr.ownerAddress});
+        const tx = await token.transfer(addr.fromAddress, amount * weiDivider, {from: addr.ownerAddress});
+        console.log("Gas: " + tx.receipt.cumulativeGasUsed + " / " + tx.receipt.gasUsed);
 
         let oneAfter = await getBalance(addr.ownerAddress);
         let twoAfter = await getBalance(addr.fromAddress);
@@ -77,14 +85,15 @@ contract('MomLifeToken', function (accounts) {
     });
 
 
-    it('Should transfer tokens to parentableInputWallet(contract)', async function () {
+    it('Should transfer tokens to parentableInputWallet(contract), and retransfer to parentAddress', async function () {
         const amount = 2;
 
         const fromBefore = await getBalance(addr.fromAddress);
         const inputContractBefore = await getBalance(addr.parentableInputWallet);
         const parentBefore = await getBalance(addr.parentAddress);
 
-        await token.transfer(addr.parentableInputWallet, amount * weiDivider, {from: addr.fromAddress});
+        const tx = await token.transfer(addr.parentableInputWallet, amount * weiDivider, {from: addr.fromAddress});
+        console.log("Gas: " + tx.receipt.cumulativeGasUsed + " / " + tx.receipt.gasUsed);
 
         const fromAfter = await getBalance(addr.fromAddress);
         const inputContractAfter = await getBalance(addr.parentableInputWallet);
@@ -104,7 +113,8 @@ contract('MomLifeToken', function (accounts) {
         const otherBefore = await getBalance(addr.otherAddress);
         const parentBefore = await getBalance(addr.parentAddress);
 
-        await token.transfer(addr.otherAddress, amount * weiDivider, {from: addr.fromAddress});
+        const tx = await token.transfer(addr.otherAddress, amount * weiDivider, {from: addr.fromAddress});
+        console.log("Gas: " + tx.receipt.cumulativeGasUsed + " / " + tx.receipt.gasUsed);
 
         const fromAfter = await getBalance(addr.fromAddress);
         const otherAfter = await getBalance(addr.otherAddress);
@@ -124,7 +134,8 @@ contract('MomLifeToken', function (accounts) {
         const otherContractBefore = await getBalance(addr.otherInputWallet);
         const parentBefore = await getBalance(addr.parentAddress);
 
-        await token.transfer(addr.otherInputWallet, amount * weiDivider, {from: addr.fromAddress});
+        const tx = await token.transfer(addr.otherInputWallet, amount * weiDivider, {from: addr.fromAddress});
+        console.log("Gas: " + tx.receipt.cumulativeGasUsed + " / " + tx.receipt.gasUsed);
 
         const fromAfter = await getBalance(addr.fromAddress);
         const otherContractAfter = await getBalance(addr.otherInputWallet);
@@ -137,7 +148,7 @@ contract('MomLifeToken', function (accounts) {
         return true;
     });
 
-    it('Don\'t should transfer tokens to other foreignInputWallet(contract)', async function () {
+    it('Should transfer tokens to other foreignInputWallet(contract)', async function () {
         const amount = 2;
 
         const fromBefore = await getBalance(addr.fromAddress);
@@ -145,7 +156,8 @@ contract('MomLifeToken', function (accounts) {
         const parentBefore = await getBalance(addr.parentAddress);
         const otherBefore = await getBalance(addr.otherAddress);
 
-        await token.transfer(addr.foreignInputWallet, amount * weiDivider, {from: addr.fromAddress});
+        const tx = await token.transfer(addr.foreignInputWallet, amount * weiDivider, {from: addr.fromAddress});
+        console.log("Gas: " + tx.receipt.cumulativeGasUsed + " / " + tx.receipt.gasUsed);
 
         const fromAfter = await getBalance(addr.fromAddress);
         const foreignContractAfter = await getBalance(addr.foreignInputWallet);

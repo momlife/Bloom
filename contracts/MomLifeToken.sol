@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.13;
 
 import "zeppelin-solidity/contracts/token/MintableToken.sol";
 
@@ -8,13 +8,22 @@ contract MomLifeToken is MintableToken {
     string public symbol = "MMT3a";
     uint8 public decimals = 18;
 
+    /**
+     * @dev Address for accumulation of tokens that incoming to service contract wallets MomLifeInputWallet
+     */
     address public parentTransferAddress;
 
+    /*
+     * @dev Triggering this event when receive tokens to service contract wallets MomLifeInputWallet
+     */
     event TransferToParent(address indexed from, address indexed to, address parent, uint256 value);
 
+
     function MomLifeToken(uint256 _initialSupply) {
-        parentTransferAddress = msg.sender;
+
         transferOwnership(msg.sender);
+
+        transferMomlifeInputWalletParentAddress(msg.sender);
 
         if(_initialSupply > 0) {
             mint(owner, _initialSupply);
@@ -22,34 +31,27 @@ contract MomLifeToken is MintableToken {
         }
     }
 
-    function changeParent(address newParent) onlyOwner {
-        if (newParent != address(0)) {
-            parentTransferAddress = newParent;
+    /*
+     * @dev Set address for accumulation. Must be owner of service contract wallets
+     */
+    function transferMomlifeInputWalletParentAddress(address _newParentAdress) onlyOwner {
+        if (_newParentAdress != address(0)) {
+            parentTransferAddress = _newParentAdress;
         }
     }
 
-    function isMomlifeInputWalletOwner(address addr) internal constant returns (bool result) {
-        result = false;
+    /**
+     * @dev Check if given address is instance of MomLifeInputWallet contract and owned by parentTransferAddress
+     * @dev
+     * @param addr address
+     */
+    function isMomlifeInputWalletOwner(address _addr) internal constant returns (bool result) {
         uint size = 0;
         assembly {
-            size := extcodesize(addr)
+            size := extcodesize(_addr)
         }
         if(size > 0) {
-
-            bytes4 signature = bytes4(sha3("getMomLifeInputWalletOwner()"));
-            address owner = address(0);
-
-            assembly {
-                let data := mload(0x40)   //Find empty storage location using "free memory pointer"
-                mstore(data,signature)
-                let success := call(5000, addr, 0, data, 32, data, 100)
-                owner := xor(0x140000000000000000000000000000000000000000,mload(data))
-                mstore(0x40,add(data,100))
-            }
-
-            if(owner != address(0) && owner == parentTransferAddress) {
-                result = true;
-            }
+            return _addr.call.gas(500)(bytes4(sha3("checkMomLifeInputWalletOwner(address)")), parentTransferAddress);
         }
     }
 

@@ -1,9 +1,10 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.13;
 
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 contract MomLifeInputWallet is Ownable {
-    function getMomLifeInputWalletOwner() public constant returns(address) {
-        return owner;
+    function checkMomLifeInputWalletOwner(address addr) external constant returns(bool) {
+        require(addr == owner);
+        return true;
     }
 }

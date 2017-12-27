@@ -1,0 +1,4 @@
+.idea
+testrpc.pid
+build/
+node_modules/
