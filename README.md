@@ -1,6 +1,6 @@
-# Momlife Bloomcoin ERC20 Token & ICO smart contracts
+# Mom.life Bloom ERC20 Token & ICO smart contracts
 
-This is repository with Ethereum smart contracts for MomLife Bloomcoin Token and ICO
+This is repository with Ethereum smart contracts for MomLife Bloomcoin Token (BLM) and ICO
 
 ## Getting Started
 
