@@ -4,8 +4,8 @@ import "zeppelin-solidity/contracts/token/MintableToken.sol";
 
 contract MomLifeToken is MintableToken {
 
-    string public name = "MMT v0.3a";
-    string public symbol = "MMT3a";
+    string public name = "Bloom";
+    string public symbol = "BLM";
     uint8 public decimals = 18;
 
     /**
